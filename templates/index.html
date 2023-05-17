@@ -1,25 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Main page</title>
+    <title>Phonebook</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f1f1f1;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            margin-top: 40px;
+            color: #333;
+        }
+
+
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        label {
+            display: inline-block;
+            width: 60px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        input[type="submit"] {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .clear-link {
+           margin-top: 40px;
+           color: #333;
+        }
+    </style>
 </head>
 <body>
-<h2>Messages</h2>
-<form method="post" action="/add_message">
-    <input type="text" name="text">
-    <input type="text" name="tag">
-    <button type="submit">Add post</button>
-</form>
+    <h1>Phonebook</h1>
+    <h2>Contacts</h2>
+    <ul>
+        {% for contact in contacts %}
+        <li>{{ contact.name }} - {{ contact.phone }}</li>
+        {% endfor %}
+    </ul>
 
-<h3>Messages feed</h3>
-{% for message in messages %}
-<div>{{ message.text }}
-    {% for tag in message.tags %}
-        <b>#{{ tag.text }}</b>
-    {% endfor %}
-</div>
-{% endfor %}
+    <h2>Add Contact</h2>
+    <form action="{{ url_for('index') }}" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" required><br><br>
+        <input type="submit" value="Add">
+    </form>
 
+    <button class="clear-link" onclick="clearlink()">Clear everything</button>
+    <script>
+       function clearlink() {
+           if (confirm("Are you sure?")) {
+               fetch('/deletecontacts', { method: 'GET' })
+               .then(response => {
+                   if (response.status === 204) {
+                       location.reload();
+                   }
+               });
+           }
+       }
+    </script>
 </body>
 </html>
